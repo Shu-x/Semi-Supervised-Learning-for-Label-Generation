@@ -42,9 +42,7 @@ class NDCG:
         self.y_pred = y_pred
         self.k = k
 
-        self.name = f'NDCG@{self.k}'
-
-    def dcg_at_k(self) -> float:
+    def dcg_at_k(self, y_true, y_pred) -> float:
         '''
         Returns the Discounted Cumulative Gain (DCG) for top k items.
 
@@ -53,8 +51,7 @@ class NDCG:
         DCG score: float
             DCG score for top k items.
         '''
-
-        order = np.argsort(self.y_pred)[::-1]   # Sort indices by predicted scores in descending order
+        order = np.argsort(y_pred)[::-1]   # Sort indices by predicted scores in descending order
         y_true = np.take(y_true, order[:self.k]) # Take top k true labels based on sorted order  
         
         gains = 2 ** y_true - 1
@@ -71,9 +68,8 @@ class NDCG:
         ----------
         NDCG score for top k items: float
         '''
-
-        ideal_dcg = self.dcg_at_k(self.y_true, self.y_true, self.k)
-        actual_dcg = self.dcg_at_k(self.y_true, self.y_pred, self.k)
+        ideal_dcg = self.dcg_at_k(self.y_true, self.y_true)
+        actual_dcg = self.dcg_at_k(self.y_true, self.y_pred)
         if ideal_dcg > 0:
             ndcg = actual_dcg / ideal_dcg
         else:
