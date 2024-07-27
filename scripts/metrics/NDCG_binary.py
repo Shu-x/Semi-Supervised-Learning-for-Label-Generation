@@ -45,6 +45,13 @@ class NDCG:
     def dcg_at_k(self, y_true, y_pred) -> float:
         '''
         Returns the Discounted Cumulative Gain (DCG) for top k items.
+        
+        Parameters:
+        ----------
+        y_true: array, shape = [n_samples]
+            Ground truth labels represented as integers (1 or 0).
+        y_pred: array, shape = [n_samples]
+            Predicted probablities of a binary class label, represented as float.
 
         Returns:
         ----------
