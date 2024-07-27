@@ -42,29 +42,23 @@ class NDCG:
         self.y_pred = y_pred
         self.k = k
 
-    def dcg_at_k(self, y_true, y_score, k=1) -> float:
+        self.name = f'NDCG@{self.k}'
+
+    def dcg_at_k(self) -> float:
         '''
         Returns the Discounted Cumulative Gain (DCG) for top k items.
-
-        Parameters:
-        ----------
-        y_true: array, shape = [n_samples]
-            Ground truth labels represented as integers (1 or 0).
-        y_pred: array, shape = [n_samples]
-            Predicted probablities of a binary class label, represented as float.
-        k: int
-            Number of items to focus on. Default k=1.
 
         Returns:
         ----------
         DCG score: float
             DCG score for top k items.
         '''
-        order = np.argsort(y_score)[::-1]   # Sort indices by predicted scores in descending order
-        y_true = np.take(y_true, order[:k]) # Take top k true labels based on sorted order  
+
+        order = np.argsort(self.y_pred)[::-1]   # Sort indices by predicted scores in descending order
+        y_true = np.take(y_true, order[:self.k]) # Take top k true labels based on sorted order  
         
         gains = 2 ** y_true - 1
-        discounts = np.log2(np.arange(1, k + 1) + 1)
+        discounts = np.log2(np.arange(1, self.k + 1) + 1)
         dcg = np.sum(gains / discounts)
     
         return dcg
@@ -77,6 +71,7 @@ class NDCG:
         ----------
         NDCG score for top k items: float
         '''
+
         ideal_dcg = self.dcg_at_k(self.y_true, self.y_true, self.k)
         actual_dcg = self.dcg_at_k(self.y_true, self.y_pred, self.k)
         if ideal_dcg > 0:
